@@ -1,4 +1,4 @@
-const moment = require('moment-timezone');
+const { DateTime } = require("luxon");
 const url = require('url');
 
 const GREETINGS_1 = 'Dzień dobry! Dzięki za zainteresowanie mieszkaniem na wynajem.';
@@ -17,29 +17,19 @@ Po sygnale nagraj swoje pytania lub powiedz kiedy pasuję Ci obejrzeć mieszkani
 const DEFAULT_WORK_WEEK_START = 1; // Monday
 const DEFAULT_WORK_WEEK_END = 5; // Friday
 
-function getInteger(stringValue, defaultValue) {
-  const parsedNumber = parseInt(stringValue, 10);
-  if (isNaN(parsedNumber)) {
-    return defaultValue;
-  }
-  return parsedNumber;
-}
-
 function shouldRedirectCall(context) {
   const workWeek = {
-    start: getInteger(context.WORK_WEEK_START, DEFAULT_WORK_WEEK_START),
-    end: getInteger(context.WORK_WEEK_END, DEFAULT_WORK_WEEK_END),
+    start: DEFAULT_WORK_WEEK_START,
+    end: DEFAULT_WORK_WEEK_END,
   };
 
-  const currentTime = moment().tz('Europe/Warsaw');
-  const hour = currentTime.hour();
-  const minute = currentTime.minute();
-  const day = currentTime.day();
+  const currentTime = DateTime.now().setZone('Europe/Warsaw');
+  const hour = currentTime.hour;
+  const minute = currentTime.minute;
+  const day = currentTime.weekday;
 
   // between monday and friday
   const isWorkingDay = day <= workWeek.end && day >= workWeek.start;
-  // between 8am and 7pm
-  const isWorkingHour = hour <= workHour.end && hour >= workHour.start;
 
   if (isWorkingDay) {
     const minuteOfDay = hour * 60 + minute;
@@ -71,8 +61,7 @@ exports.handler = function (context, event, callback) {
   if (shouldRedirectCall(context)) {
     sayPolish(twiml, GREETINGS_2_INSIDE);
     const dial = twiml.dial({
-      callerId: context.CALLER_ID || event.From,
-      callReason: 'Wynajem mieszkania Drawska'
+      callerId: context.CALLER_ID || event.From
     });
     dial.number(phoneNumberToForwardTo);
   } else {
