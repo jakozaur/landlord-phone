@@ -58,7 +58,18 @@ exports.handler = function (context, event, callback) {
   const twiml = new Twilio.twiml.VoiceResponse();
 
   sayPolish(twiml, GREETINGS_1);
+
   if (shouldRedirectCall(context)) {
+    if (context.CALLER_ID) {
+      console.log("Sending sms");
+      const client = context.getTwilioClient();
+      client.messages.create({
+        from: context.CALLER_ID,
+        to: phoneNumberToForwardTo,
+        body: `Numer potencjalnego najemcy ${event.From}.\n`
+      });
+      console.log("Sending sms end");
+    }
     sayPolish(twiml, GREETINGS_2_INSIDE);
     const dial = twiml.dial({
       callerId: context.CALLER_ID || event.From
