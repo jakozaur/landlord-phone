@@ -52,7 +52,7 @@ function sayPolish(voiceResponse, text) {
   );
 }
 
-exports.handler = function (context, event, callback) {
+exports.handler = async function (context, event, callback) {
   const phoneNumberToForwardTo = context.MY_PHONE_NUMBER;
 
   const twiml = new Twilio.twiml.VoiceResponse();
@@ -63,7 +63,7 @@ exports.handler = function (context, event, callback) {
     if (context.CALLER_ID) {
       console.log("Sending sms");
       const client = context.getTwilioClient();
-      client.messages.create({
+      await client.messages.create({
         from: context.CALLER_ID,
         to: phoneNumberToForwardTo,
         body: `Numer potencjalnego najemcy ${event.From}.\n`
