@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const url = require('url');
 
-const GREETINGS_1 = 'Dzień dobry! Dzięki za zainteresowanie mieszkaniem na wynajem.';
+const GREETINGS_1 = 'Dzień dobry! Dzięki za zainteresowanie mieszkaniem na Drawskiej 14a wynajem.';
 const GREETINGS_2_INSIDE = `
 Za chwilę połączę Cię z właścicielem.
 Jeśli nie jesteś potencjalnym najemcą i dzwonisz w innej sprawie proszę o rozłączenie się.
