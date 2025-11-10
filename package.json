@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "2025-landlord-phone-drawska",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -17,6 +17,6 @@
     "jest-cli": "^26.6.3"
   },
   "engines": {
-    "node": "12"
+    "node": "20"
   }
 }

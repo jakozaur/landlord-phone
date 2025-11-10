@@ -8,8 +8,8 @@ Jeśli nie jesteś potencjalnym najemcą i dzwonisz w innej sprawie proszę o ro
 `;
 const GREETINGS_2_OUTSIDE = `
 Obecnie nie mogę rozmawiać, ale za chwilę będziesz mógł nagrać swoje pytania czy umówić się na obejrzenie mieszkania.
-Odbieram telefony w dni robocze rano od 8 do 9:30 i wieczorem, od 20:30 do 22:00.
-W weekend od 8:00 do 22:00
+Odbieram telefony od poniedziałku do czwartku od 9:30 do 13:30 i wieczorem od 19:00 do 20:00.
+Od piątku do niedzieli od 9:00 do 19:00.
 Po sygnale nagraj swoje pytania lub powiedz kiedy pasuję Ci obejrzeć mieszkanie.
 `;
 
@@ -18,28 +18,24 @@ const DEFAULT_WORK_WEEK_START = 1; // Monday
 const DEFAULT_WORK_WEEK_END = 5; // Friday
 
 function shouldRedirectCall(context) {
-  const workWeek = {
-    start: DEFAULT_WORK_WEEK_START,
-    end: DEFAULT_WORK_WEEK_END,
-  };
-
   const currentTime = DateTime.now().setZone('Europe/Warsaw');
   const hour = currentTime.hour;
   const minute = currentTime.minute;
   const day = currentTime.weekday;
+  const minuteOfDay = hour * 60 + minute;
 
-  // between monday and friday
-  const isWorkingDay = day <= workWeek.end && day >= workWeek.start;
-
-  if (isWorkingDay) {
-    const minuteOfDay = hour * 60 + minute;
-    return ((8 * 60) <= minuteOfDay && minuteOfDay < (9 * 60 + 30)) ||
-      ((20 * 60 + 30) <= minuteOfDay && minuteOfDay < (22 * 60));
-  } else {
-    return 8 <= hour && hour < 22;
+  // Monday-Thursday (days 1-4): 9:30-13:30 and 19:00-20:00
+  if (day >= 1 && day <= 4) {
+    return ((9 * 60 + 30) <= minuteOfDay && minuteOfDay < (13 * 60 + 30)) ||
+      ((19 * 60) <= minuteOfDay && minuteOfDay < (20 * 60));
   }
 
-  return isWorkingDay && isWorkingHour;
+  // Friday-Sunday (days 5-7): 9:00-19:00
+  if (day >= 5 && day <= 7) {
+    return (9 * 60) <= minuteOfDay && minuteOfDay < (19 * 60);
+  }
+
+  return false;
 }
 
 function sayPolish(voiceResponse, text) {
